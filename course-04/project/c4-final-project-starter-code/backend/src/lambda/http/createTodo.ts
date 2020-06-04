@@ -7,6 +7,17 @@ import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
 
+  console.log(newTodo)
   // TODO: Implement creating a new TODO item
-  return undefined
+  // return undefined
+
+  return {
+    statusCode: 201,
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    },
+    body: JSON.stringify({
+      newItem: newTodo
+    })
+  }
 }
