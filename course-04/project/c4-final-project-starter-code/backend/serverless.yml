@@ -1,5 +1,5 @@
 service:
-  name: serverless-todo-app
+  name: serverless-todo-app-us-west-2
 
 plugins:
   - serverless-webpack
@@ -11,12 +11,31 @@ provider:
   # runtime: nodejs8.10
 
   stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'us-east-1'}
+  region: ${opt:region, 'us-west-2'}
 
   environment:
     TODO_TABLENAME: Todo-${self:provider.stage}
     INDEX_NAME: TodoIndex-${self:provider.stage}
-    TODOITEMS_S3_BUCKET: ud-cdnd-arun-${self:provider.stage}
+    TODOITEMS_S3_BUCKET: ud-cdnd-arun1-${self:provider.stage}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:Query
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLENAME}
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLENAME}/index/${self:provider.environment.INDEX_NAME}
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: arn:aws:s3:::${self:provider.environment.TODOITEMS_S3_BUCKET}/*
+    
   
 functions:
 
@@ -30,6 +49,7 @@ functions:
       - http:
           method: get
           path: todos
+          cors: true
 
   # TODO: Configure this function
   CreateTodo:
@@ -38,6 +58,7 @@ functions:
       - http:
           method: post
           path: todos
+          cors: true
 
   # TODO: Configure this function
   UpdateTodo:
@@ -46,6 +67,7 @@ functions:
       - http:
           method: patch
           path: todos/{todoId}
+          cors: true
 
   # TODO: Configure this function
   DeleteTodo:
@@ -54,6 +76,7 @@ functions:
       - http:
           method: delete
           path: todos/{todoId}
+          cors: true
 
   # TODO: Configure this function
   GenerateUploadUrl:
@@ -62,6 +85,7 @@ functions:
       - http:
           method: post
           path: todos/{todoId}/attachment
+          cors: true
 
 resources:
   Resources:
