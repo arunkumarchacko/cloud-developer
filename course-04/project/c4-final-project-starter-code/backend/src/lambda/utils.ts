@@ -3,8 +3,8 @@ import { parseUserId } from "../auth/utils";
 import * as AWS  from 'aws-sdk'
 import * as crypto from "crypto";
 
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todoTable = process.env.TODO_TABLENAME
+// const docClient = new AWS.DynamoDB.DocumentClient()
+// const todoTable = process.env.TODO_TABLENAME
 const s3BucketName = process.env.TODOITEMS_S3_BUCKET
 
 export const s3 = new AWS.S3({
@@ -27,19 +27,7 @@ export function getUserId(event: APIGatewayProxyEvent): string {
   return md5(parseUserId(jwtToken))
 }
 
-export async function getTodoItem(todoId: string, userId: string) {
-  const result = await docClient
-    .get({
-      TableName: todoTable,
-      Key: {
-        userId: userId,
-        todoId: todoId
-      }
-    })
-    .promise()
 
-  return result.Item
-}
 
 export function getPutSignedUrl( key: string ): string{
   const url = s3.getSignedUrl('putObject', {
