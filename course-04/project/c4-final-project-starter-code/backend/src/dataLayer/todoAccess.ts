@@ -1,10 +1,10 @@
 
 
 import * as AWS  from 'aws-sdk'
-// import * as AWSXRay from 'aws-xray-sdk'
+import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { getGETSignedUrl } from '../lambda/utils'
-// const XAWS = AWSXRay.captureAWS(AWS)
+const XAWS = AWSXRay.captureAWS(AWS)
 
 import { TodoItem } from '../models/TodoItem'
 import { createLogger } from '../utils/logger'
@@ -14,7 +14,7 @@ const logger = createLogger('dataLayer')
 export class TodoAccess {
 
   constructor(
-    private readonly docClient: DocumentClient = new AWS.DynamoDB.DocumentClient(),
+    private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
     private readonly todoTable = process.env.TODO_TABLENAME) {
   }
 
